@@ -18,7 +18,7 @@ Route::get('/phpinfo',function(){
     phpinfo();
 });
 
-Route::get('/wechat','TestController@wechat'); //接口测试
+Route::get('/wechat','WeachatController@wechat'); //接口测试
 
 
 Route::get('/test1','TestController@test1'); //测试1
