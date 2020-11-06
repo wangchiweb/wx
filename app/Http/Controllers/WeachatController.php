@@ -31,27 +31,27 @@ class WeachatController extends Controller{
             echo $token;
         }
     }
-    /**处理推送事件 */
-    private function event(){
-        $signature = $_GET["signature"];
-        $timestamp = $_GET["timestamp"];
-        $nonce = $_GET["nonce"];
+    // /**处理推送事件 */
+    // private function event(){
+    //     $signature = $_GET["signature"];
+    //     $timestamp = $_GET["timestamp"];
+    //     $nonce = $_GET["nonce"];
         
-        $token = env('WX_TOKEN');
-        $tmpArr = array($token, $timestamp, $nonce);
-        sort($tmpArr, SORT_STRING);
-        $tmpStr = implode( $tmpArr );
-        $tmpStr = sha1( $tmpStr );
+    //     $token = env('WX_TOKEN');
+    //     $tmpArr = array($token, $timestamp, $nonce);
+    //     sort($tmpArr, SORT_STRING);
+    //     $tmpStr = implode( $tmpArr );
+    //     $tmpStr = sha1( $tmpStr );
         
-        if( $tmpStr == $signature ){   //验证通过
-            echo "";
+    //     if( $tmpStr == $signature ){   //验证通过
+    //         echo "";
 
 
-            
-        }else{
-            echo "";
-        }
-    }
+
+    //     }else{
+    //         echo "";
+    //     }
+    // }
     /**获取access_token */
     public function getaccesstoken(){
         $key='wx:access_token';
