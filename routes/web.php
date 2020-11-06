@@ -19,6 +19,7 @@ Route::get('/phpinfo',function(){
 });
 
 Route::get('/wechat','WeachatController@wechat'); //接口测试
+Route::get('/getaccesstoken','WeachatController@getaccesstoken'); //获取access_token
 
 
 Route::get('/test1','TestController@test1'); //测试1
