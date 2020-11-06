@@ -44,8 +44,23 @@ class WeachatController extends Controller{
         $tmpStr = sha1( $tmpStr );
         
         if( $tmpStr == $signature ){   //验证通过
-            echo "";
+            //接受数据
+            $xml_str=file_get_contents("php://input");
 
+            //记录日志
+            file_put_contents('wx_event.log',$xml_str);
+            echo "";die;
+
+            //把xml文本转换为PHP的对象或数组
+            $data=simplexml_load_string($xml_str, 'SimpleXMLElement', LIBXML_NOCDATA);
+            dd($data);
+            $xml="<xml>
+            <ToUserName><![CDATA[toUser]]></ToUserName>
+            <FromUserName><![CDATA[fromUser]]></FromUserName>
+            <CreateTime>12345678</CreateTime>
+            <MsgType><![CDATA[text]]></MsgType>
+            <Content><![CDATA[你好]]></Content>
+          </xml>";
 
             
         }else{
