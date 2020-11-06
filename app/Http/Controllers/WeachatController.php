@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Redis;
 
 class WeachatController extends Controller{
     /**微信接口配置 */
-    private function checkSignature(){
+    public function checkSignature(){
         $signature = $_GET["signature"];
         $timestamp = $_GET["timestamp"];
         $nonce = $_GET["nonce"];
@@ -32,7 +32,7 @@ class WeachatController extends Controller{
         }
     }
     /**处理推送事件 */
-    private function event(){
+    public function event(){
         $signature = $_GET["signature"];
         $timestamp = $_GET["timestamp"];
         $nonce = $_GET["nonce"];
