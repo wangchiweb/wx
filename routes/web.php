@@ -18,8 +18,8 @@ Route::get('/phpinfo',function(){
     phpinfo();
 });
 
-Route::get('/wechat','WeachatController@wechat'); //接口测试
-// Route::post('/wechat','WeachatController@event'); //接受事件推送
+// Route::get('/wechat','WeachatController@wechat'); //接口测试
+Route::post('/wechat','WeachatController@event'); //接受事件推送
 Route::get('/getaccesstoken','WeachatController@getaccesstoken'); //获取access_token
 
 
