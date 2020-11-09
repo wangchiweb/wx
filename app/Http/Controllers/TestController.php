@@ -13,4 +13,14 @@ class TestController extends Controller{
     public function test2(){
         echo phpinfo();
     }
+    public function test3(){
+        echo '<pre>';
+        print_r($_GET); 
+        echo '<pre>';
+    }
+    public function test4(){
+        echo '<pre>';
+        print_r($_POST); 
+        echo '<pre>';
+    }
 }

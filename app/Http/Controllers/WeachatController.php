@@ -55,12 +55,13 @@ class WeachatController extends Controller{
             $data=simplexml_load_string($xml_str, 'SimpleXMLElement', LIBXML_NOCDATA);
             dd($data);
             $xml="<xml>
-            <ToUserName><![CDATA[toUser]]></ToUserName>
-            <FromUserName><![CDATA[fromUser]]></FromUserName>
-            <CreateTime>12345678</CreateTime>
-            <MsgType><![CDATA[text]]></MsgType>
-            <Content><![CDATA[你好]]></Content>
-          </xml>";
+                      <ToUserName><![CDATA[toUser]]></ToUserName>
+                      <FromUserName><![CDATA[fromUser]]></FromUserName>
+                      <CreateTime>12345678</CreateTime>
+                      <MsgType><![CDATA[text]]></MsgType>
+                      <Content><![CDATA[你好]]></Content>
+                  </xml>";
+                
 
             
         }else{
