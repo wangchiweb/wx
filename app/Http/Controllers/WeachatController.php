@@ -50,12 +50,12 @@ class WeachatController extends Controller{
             //记录日志
             file_put_contents('wx_event.log',$xml_str,FILE_APPEND);
 
-            //把xml文本转换为PHP的对象或数组
-            $data=simplexml_load_string($xml_str, 'SimpleXMLElement', LIBXML_NOCDATA);
+            //把xml文本转换为PHP的对象
+            $data=simplexml_load_string($xml_str);
             // dd($data);
 
-            if($data['MsgType']=="event"){
-                if($data['Event']=="subscribe"){
+            if($data->MsgType=="event"){
+                if($data->Event=="subscribe"){
                     echo $this->news($data);
                     die;
                 }
@@ -67,8 +67,8 @@ class WeachatController extends Controller{
     }
     /**消息 */
     public function news($data){
-        $ToUserName=$data['FromUserName'];
-        $FromUserName=$data['ToUserName'];
+        $ToUserName=$data->FromUserName;
+        $FromUserName=$data->ToUserName;
         $content="欢迎关注";
         $xml="<xml>
                 <ToUserName><![CDATA[".$ToUserName."]]></ToUserName>
