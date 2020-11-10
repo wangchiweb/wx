@@ -34,39 +34,56 @@ class WeachatController extends Controller{
     }
     /**处理推送事件 */
     public function event(){
-        $signature = $_GET["signature"];
-        $timestamp = $_GET["timestamp"];
-        $nonce = $_GET["nonce"];
-        
-        $token = env('WX_TOKEN');
-        $tmpArr = array($token, $timestamp, $nonce);
-        sort($tmpArr, SORT_STRING);
-        $tmpStr = implode( $tmpArr );
-        $tmpStr = sha1( $tmpStr );
-        
-        if( $tmpStr == $signature ){   //验证通过
-            //接受数据
-            $xml_str=file_get_contents("php://input");
-
-            //记录日志
-            file_put_contents('wx_event.log',$xml_str,FILE_APPEND);
-
-            //把xml文本转换为PHP的对象
-            $data=simplexml_load_string($xml_str);
-            // dd($data);
-
-            if($data->MsgType=="event"){
-                if($data->Event=="subscribe"){
-                    echo $this->news($data);
-                    die;
-                }
-            }
-            
-        }else{
-            echo "";
+        //验签
+        if($this->checkSignature()==false){   //验签不通过
+            die;
         }
+        //接受数据
+        $xml_str=file_get_contents("php://input");
+
+        //记录日志
+        file_put_contents('wx_event.log',$xml_str,FILE_APPEND);
+
+        //把xml文本转换为PHP的对象
+        $data=simplexml_load_string($xml_str);
+        // dd($data);
+        $msg_type=$data->MsgType;   //推送事件的消息类型
+        switch($msg_type){
+            case 'event' :
+
+                if($data->Event=='subscribe'){   // subscribe 扫码关注
+                    echo $this->news($data);  
+
+                }elseif($data->Event=='unsubscribe'){   // unsubscribe 取消关注
+                    
+                }
+
+                break;
+            case 'text' :           //处理文本信息
+                echo '2222';
+                break;
+            case 'image' :          // 处理图片信息
+                echo '3333';
+                break;
+            case 'voice' :          // 语音
+                echo '4444';
+                break;
+            case 'video' :          // 视频
+                echo '5555';
+                break;
+
+            default:
+                echo 'default';
+        }
+
+        // if($data->MsgType=="event"){
+        //     if($data->Event=="subscribe"){
+        //         echo $this->news($data);
+        //         die;
+        //     }
+        // }   
     }
-    /**消息 */
+    /**回复扫码关注 */
     public function news($data){
         $ToUserName=$data->FromUserName;
         $FromUserName=$data->ToUserName;
