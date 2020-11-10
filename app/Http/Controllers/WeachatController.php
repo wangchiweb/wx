@@ -113,6 +113,13 @@ class WeachatController extends Controller{
                     'type'  => 'click',
                     'name'  => '微信',
                     'key'   => 'wechat'
+
+                    "sub_button"    =>
+                        [
+                            "type":"view",
+                            "name":"搜索",
+                            "url":"http://www.soso.com/"
+                        ],
                 ],
                 [
                     'type'  => 'view',
