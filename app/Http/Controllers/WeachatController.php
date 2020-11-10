@@ -87,9 +87,9 @@ class WeachatController extends Controller{
         //检查Redis中是否有access_token
         $token=Redis::get($key);
         if($token){
-            echo '有缓存'.'<br>';
+            // echo '有缓存'.'<br>';
         }else{
-            echo '无缓存'.'<br>';
+            // echo '无缓存'.'<br>';
             $url="https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=".env('WX_APPID')."&secret=".env('WX_APPSECRET');
             $response=file_get_contents($url);
             // dd($response);
@@ -128,14 +128,14 @@ class WeachatController extends Controller{
             'verify'=>false,
             'body'=>json_encode($menu)
         ]);   //发起请求并接收响应
-        dd($response);
-        $json_data=$response->getBody();   //服务器的响应数据
-        echo $json_data;die;
-        //判断接口返回
-        $info=json_decode($json_data,true);
-        if($info['errcode']>0){   //判断错误码
+        print_r($response); 
+        // $json_data=$response->getBody();   //服务器的响应数据
+        // echo $json_data;die;
+        // //判断接口返回
+        // $info=json_decode($json_data,true);
+        // if($info['errcode']>0){   //判断错误码
 
-        }
+        // }
 
     }
 }
