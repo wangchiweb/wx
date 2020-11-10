@@ -128,14 +128,11 @@ class WeachatController extends Controller{
             'verify'=>false,
             'body'=>json_encode($menu)
         ]);   //发起请求并接收响应
-        print_r($response); 
-        // $json_data=$response->getBody();   //服务器的响应数据
-        // echo $json_data;die;
-        // //判断接口返回
-        // $info=json_decode($json_data,true);
-        // if($info['errcode']>0){   //判断错误码
-
-        // }
+        
+        $json_data=$response->getBody();   //服务器的响应数据
+        //判断接口返回
+        $info=json_decode($json_data,true);
+        
 
     }
 }
