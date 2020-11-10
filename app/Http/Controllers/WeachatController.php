@@ -53,20 +53,33 @@ class WeachatController extends Controller{
 
             //把xml文本转换为PHP的对象或数组
             $data=simplexml_load_string($xml_str, 'SimpleXMLElement', LIBXML_NOCDATA);
-            dd($data);
-            $xml="<xml>
-                      <ToUserName><![CDATA[toUser]]></ToUserName>
-                      <FromUserName><![CDATA[fromUser]]></FromUserName>
-                      <CreateTime>12345678</CreateTime>
-                      <MsgType><![CDATA[text]]></MsgType>
-                      <Content><![CDATA[你好]]></Content>
-                  </xml>";
-                
+            // dd($data);
 
+            if($data['MsgType']=="event"){
+                if($data['Event']=="subscribe"){
+                    echo $this->news($data);
+                    die;
+                }
+            }
             
         }else{
             echo "";
         }
+    }
+    /**消息 */
+    public function news($data){
+        $ToUserName=$data['FromUserName'];
+        $FromUserName=$data['ToUserName'];
+        $content="欢迎关注";
+        $xml="<xml>
+                <ToUserName><![CDATA[".$ToUserName."]]></ToUserName>
+                <FromUserName><![CDATA[".$FromUserName."]]></FromUserName>
+                <CreateTime>time()</CreateTime>
+                <MsgType><![CDATA[text]]></MsgType>
+                <Content><![CDATA[".$content."]]></Content>
+                <MsgId>%s</MsgId>
+            </xml>";     
+        return $xml;
     }
     /**获取access_token */
     public function getaccesstoken(){
