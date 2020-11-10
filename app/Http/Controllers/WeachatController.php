@@ -52,10 +52,15 @@ class WeachatController extends Controller{
             case 'event' :
 
                 if($data->Event=='subscribe'){   // subscribe 扫码关注
-                    echo $this->news($data);  
+                    $content="欢迎关注";
+                    echo $this->news($data,$content);  
 
                 }elseif($data->Event=='unsubscribe'){   // unsubscribe 取消关注
-                    
+                    if($data->Event=='subscribe'){   // subscribe 扫码关注
+                        $content="欢迎再次关注";
+                        echo $this->news($data,$content);  
+    
+                    }
                 }
 
                 break;
@@ -84,10 +89,10 @@ class WeachatController extends Controller{
         // }   
     }
     /**回复扫码关注 */
-    public function news($data){
+    public function news($data,$content){
         $ToUserName=$data->FromUserName;
         $FromUserName=$data->ToUserName;
-        $content="欢迎关注";
+        
         $xml="<xml>
                 <ToUserName><![CDATA[".$ToUserName."]]></ToUserName>
                 <FromUserName><![CDATA[".$FromUserName."]]></FromUserName>
