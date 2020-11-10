@@ -122,6 +122,7 @@ class WeachatController extends Controller{
 
             ]
         ];
+        
         //使用guzzle发起POST请求
         $client=new Client();   //实例化 客户端
         $response=$client->request('POST',$url,[
@@ -132,7 +133,6 @@ class WeachatController extends Controller{
         $json_data=$response->getBody();   //服务器的响应数据
         //判断接口返回
         $info=json_decode($json_data,true);
-        // dd($info);
         if($info['errcode']==0){   //判断错误码
             echo '请求成功';
         }else{
