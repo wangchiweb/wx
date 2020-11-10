@@ -125,8 +125,8 @@ class WeachatController extends Controller{
         //使用guzzle发起POST请求
         $client=new Client();   //实例化 客户端
         $response=$client->request('POST',$url,[
-            'verify'=>false,
-            'body'=>json_encode($menu,JSON_UNESCAPED_UNICODE);
+            'verify'=>false,      
+            'body'=>json_encode($menu,JSON_UNESCAPED_UNICODE)
         ]);   //发起请求并接收响应
         
         $json_data=$response->getBody();   //服务器的响应数据
