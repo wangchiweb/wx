@@ -111,12 +111,12 @@ class WeachatController extends Controller{
             'button'    => [
                 [
                     'type'  => 'click',
-                    'name'  => 'wx',
+                    'name'  => '微信',
                     'key'   => 'wechat'
                 ],
                 [
                     'type'  => 'view',
-                    'name'  => 'BAIDU',
+                    'name'  => '百度',
                     'url'   => 'https://www.baidu.com'
                 ],
 
@@ -126,7 +126,7 @@ class WeachatController extends Controller{
         $client=new Client();   //实例化 客户端
         $response=$client->request('POST',$url,[
             'verify'=>false,
-            'body'=>json_encode($menu)
+            'body'=>json_encode($menu,JSON_UNESCAPED_UNICODE);
         ]);   //发起请求并接收响应
         
         $json_data=$response->getBody();   //服务器的响应数据
