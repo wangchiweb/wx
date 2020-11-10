@@ -18,10 +18,14 @@ Route::get('/phpinfo',function(){
     phpinfo();
 });
 
-Route::get('/wechat','WeachatController@wechat'); //接口测试
-Route::post('/wechat','WeachatController@event'); //接受事件推送
-Route::get('/getaccesstoken','WeachatController@getaccesstoken'); //获取access_token
+Route::prefix('/wechat')->group(function(){   //路由分组
+    Route::get('/','WeachatController@wechat'); //接口测试
+    Route::post('/','WeachatController@event'); //接受事件推送
+    Route::get('/getaccesstoken','WeachatController@getaccesstoken'); //获取access_token
+    Route::post('/createmenu','WeachatController@createmenu'); //接受事件推送
 
+});
+    
 
 Route::get('/test1','TestController@test1'); //测试1
 Route::get('/test2','TestController@test2'); //测试2

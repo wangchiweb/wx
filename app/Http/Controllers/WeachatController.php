@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
+use GuzzleHttp\Client;
 
 class WeachatController extends Controller{
     /**微信接口配置 */
@@ -100,6 +101,41 @@ class WeachatController extends Controller{
             Redis::set($key,$token);
             Redis::expire($key,3600);
         }
-        echo 'access_token:'.$token;
+        return $token;
+    }
+    /**创建自定义菜单 */
+    public function createmenu(){
+        $access_token=$this->getaccesstoken();
+        $url="https://api.weixin.qq.com/cgi-bin/menu/create?access_token=".$access_token;
+        $menu = [
+            'button'    => [
+                [
+                    'type'  => 'click',
+                    'name'  => '微信',
+                    'key'   => 'wechat'
+                ],
+                [
+                    'type'  => 'view',
+                    'name'  => 'BAIDU',
+                    'url'   => 'https://www.baidu.com'
+                ],
+
+            ]
+        ];
+        //使用guzzle发起POST请求
+        $client=new Client();   //实例化 客户端
+        $response=$client->request('POST',$url,[
+            'verify'=>false,
+            'body'=>json_encode($menu)
+        ]);   //发起请求并接收响应
+        dd($response);
+        $json_data=$response->getBody();   //服务器的响应数据
+        echo $json_data;die;
+        //判断接口返回
+        $info=json_decode($json_data,true);
+        if($info['errcode']>0){   //判断错误码
+
+        }
+
     }
 }
