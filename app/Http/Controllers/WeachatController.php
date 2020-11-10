@@ -111,7 +111,7 @@ class WeachatController extends Controller{
             'button'    => [
                 [
                     'type'  => 'click',
-                    'name'  => '微信',
+                    'name'  => 'wx',
                     'key'   => 'wechat'
                 ],
                 [
@@ -132,7 +132,12 @@ class WeachatController extends Controller{
         $json_data=$response->getBody();   //服务器的响应数据
         //判断接口返回
         $info=json_decode($json_data,true);
-        
+        // dd($info);
+        if($info['errcode']==0){   //判断错误码
+            echo '请求成功';
+        }else{
+            echo '请求失败';
+        }
 
     }
 }
