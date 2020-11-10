@@ -19,7 +19,7 @@ Route::get('/phpinfo',function(){
 });
 
 Route::prefix('/wechat')->group(function(){   //路由分组
-    // Route::get('/','WeachatController@wechat'); //接口测试
+    Route::get('/','WeachatController@wechat'); //接口测试
     Route::post('/','WeachatController@event'); //接受事件推送
     Route::get('/getaccesstoken','WeachatController@getaccesstoken'); //获取access_token
     Route::post('/createmenu','WeachatController@createmenu'); //接受事件推送
