@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use GuzzleHttp\Client;
+use App\Model\WxUser;
 
 class WeachatController extends Controller{
     /**微信接口配置 */
@@ -60,10 +61,10 @@ class WeachatController extends Controller{
                     file_put_contents('wx_user.log',$url,FILE_APPEND);
                     $url_json = file_get_contents($url);
                     $url_json = json_decode($url_json,true);
-                    echo $url_json;die;
-                    // //查询用户表是否有此用户的信息
-                    // $res=
-
+                    // echo $url_json;die;
+                    //查询用户表是否有此用户的信息
+                    $res=WxUser::where('openid',$url_json['openid'])->first();
+                    dd($res);
 
                     echo $this->news($data,$content);  
 
