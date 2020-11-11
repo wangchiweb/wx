@@ -53,14 +53,14 @@ class WeachatController extends Controller{
 
                 if($data->Event=='subscribe'){   // subscribe 扫码关注
                     $content="欢迎关注";
+                    //获取用户信息
+                    // $url="https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
+
+
                     echo $this->news($data,$content);  
 
                 }elseif($data->Event=='unsubscribe'){   // unsubscribe 取消关注
-                    if($data->Event=='subscribe'){   // subscribe 扫码关注
-                        $content="欢迎再次关注";
-                        echo $this->news($data,$content);  
-    
-                    }
+                    //取消用户信息
                 }
 
                 break;
@@ -91,6 +91,7 @@ class WeachatController extends Controller{
     /**回复扫码关注 */
     public function news($data,$content){
         $ToUserName=$data->FromUserName;
+        dd($ToUserName);
         $FromUserName=$data->ToUserName;
         $CreateTime=time();
         $MsgType="text";
