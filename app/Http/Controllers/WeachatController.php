@@ -53,31 +53,31 @@ class WeachatController extends Controller{
             case 'event' :
                 if($data->Event=='subscribe'){   // subscribe 扫码关注
                     $content="欢迎关注";
-                    //获取用户信息
-                    $access_token=$this->getaccesstoken();   //获取access_token
-                    $openid=$data->FromUserName;   //获取openid
-                    $url="https://api.weixin.qq.com/cgi-bin/user/info?access_token=".$access_token."&openid=".$openid."&lang=zh_CN";
-                    //记录用户信息日志
-                    file_put_contents('wx_user.log',$url,FILE_APPEND);
-                    $url_json = file_get_contents($url);
-                    $url_json = json_decode($url_json,true);
-                    // echo $url_json;die;
-                    //查询用户表是否有此用户的信息
-                    $res=WxUser::where('openid',$url_json['openid'])->first();
-                    if($res){
-                        $content="欢迎回来";
-                    }else{
-                        $userinfo=[
-                            'openid'=>$url_json['openid'],
-                            'nickname'=>$url_json['nickname'],
-                            'sex'=>$url_json['sex'],
-                            'city'=>$url_json['city'],
-                            'headimgurl'=>$url_json['headimgurl'],
-                            'subscribe_time'=>$url_json['subscribe_time']
-                        ];
-                        WxUser::insert($userinfo);
-                    }
-                    //发送消息
+                    // //获取用户信息
+                    // $access_token=$this->getaccesstoken();   //获取access_token
+                    // $openid=$data->FromUserName;   //获取openid
+                    // $url="https://api.weixin.qq.com/cgi-bin/user/info?access_token=".$access_token."&openid=".$openid."&lang=zh_CN";
+                    // //记录用户信息日志
+                    // file_put_contents('wx_user.log',$url,FILE_APPEND);
+                    // $url_json = file_get_contents($url);
+                    // $url_json = json_decode($url_json,true);
+                    // // echo $url_json;die;
+                    // //查询用户表是否有此用户的信息
+                    // $res=WxUser::where('openid',$url_json['openid'])->first();
+                    // if($res){
+                    //     $content="欢迎回来";
+                    // }else{
+                    //     $userinfo=[
+                    //         'openid'=>$url_json['openid'],
+                    //         'nickname'=>$url_json['nickname'],
+                    //         'sex'=>$url_json['sex'],
+                    //         'city'=>$url_json['city'],
+                    //         'headimgurl'=>$url_json['headimgurl'],
+                    //         'subscribe_time'=>$url_json['subscribe_time']
+                    //     ];
+                    //     WxUser::insert($userinfo);
+                    // }
+                    // //发送消息
 
                     echo $this->news($data,$content);  
             
