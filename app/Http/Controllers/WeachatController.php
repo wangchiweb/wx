@@ -79,8 +79,8 @@ class WeachatController extends Controller{
                     }
                     //发送消息
 
-                    $result=$this->news($data,$content);  
-                    return $result;
+                    echo $this->news($data,$content);  
+            
 
                 }elseif($data->Event=='unsubscribe'){   // unsubscribe 取消关注
                     //取消用户信息
