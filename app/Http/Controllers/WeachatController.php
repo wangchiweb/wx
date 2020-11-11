@@ -64,9 +64,23 @@ class WeachatController extends Controller{
                     // echo $url_json;die;
                     //查询用户表是否有此用户的信息
                     $res=WxUser::where('openid',$url_json['openid'])->first();
-                    dd($res);
+                    if($res){
+                        $content="欢迎回来";
+                    }else{
+                        $userinfo=[
+                            'openid'=>$url_json['openid'],
+                            'nickname'=>$url_json['nickname'],
+                            'sex'=>$url_json['sex'],
+                            'city'=>$url_json['city'],
+                            'headimgurl'=>$url_json['headimgurl'],
+                            'subscribe_time'=>$url_json['subscribe_time']
+                        ];
+                        WxUser::insert($userinfo);
+                    }
+                    //发送消息
 
-                    echo $this->news($data,$content);  
+                    $result=$this->news($data,$content);  
+                    return $result;
 
                 }elseif($data->Event=='unsubscribe'){   // unsubscribe 取消关注
                     //取消用户信息
