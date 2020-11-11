@@ -50,11 +50,19 @@ class WeachatController extends Controller{
         $msg_type=$data->MsgType;   //推送事件的消息类型
         switch($msg_type){
             case 'event' :
-
                 if($data->Event=='subscribe'){   // subscribe 扫码关注
                     $content="欢迎关注";
                     //获取用户信息
-                    // $url="https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
+                    $access_token=$this->getaccesstoken();   //获取access_token
+                    $openid=$data->FromUserName;   //获取openid
+                    $url="https://api.weixin.qq.com/cgi-bin/user/info?access_token=".$access_token."&openid=".$openid."&lang=zh_CN";
+                    //记录用户信息日志
+                    file_put_contents('wx_user.log',$url,FILE_APPEND);
+                    $url_json = file_get_contents($url);
+                    $url_json = json_decode($url_json,true);
+                    echo $url_json;die;
+                    // //查询用户表是否有此用户的信息
+                    // $res=
 
 
                     echo $this->news($data,$content);  
@@ -91,20 +99,19 @@ class WeachatController extends Controller{
     /**回复扫码关注 */
     public function news($data,$content){
         $ToUserName=$data->FromUserName;
-        dd($ToUserName);
-        // $FromUserName=$data->ToUserName;
-        // $CreateTime=time();
-        // $MsgType="text";
-        // $xml="<xml>
-        //         <ToUserName><![CDATA[%s]]></ToUserName>
-        //         <FromUserName><![CDATA[%s]]></FromUserName>
-        //         <CreateTime>%s</CreateTime>
-        //         <MsgType><![CDATA[%s]]></MsgType>
-        //         <Content><![CDATA[%s]]></Content>
-        //         <MsgId>%s</MsgId>
-        //     </xml>";     
-        // $info=sprintf($xml,$ToUserName,$FromUserName,$CreateTime,$MsgType,$content,);
-        // return $info;
+        $FromUserName=$data->ToUserName;
+        $CreateTime=time();
+        $MsgType="text";
+        $xml="<xml>
+                <ToUserName><![CDATA[%s]]></ToUserName>
+                <FromUserName><![CDATA[%s]]></FromUserName>
+                <CreateTime>%s</CreateTime>
+                <MsgType><![CDATA[%s]]></MsgType>
+                <Content><![CDATA[%s]]></Content>
+                <MsgId>%s</MsgId>
+            </xml>";     
+        $info=sprintf($xml,$ToUserName,$FromUserName,$CreateTime,$MsgType,$content,);
+        return $info;
     }
     /**获取access_token */
     public function getaccesstoken(){
@@ -130,6 +137,7 @@ class WeachatController extends Controller{
     }
     /**创建自定义菜单 */
     public function createmenu(){
+        //获取access_token
         $access_token=$this->getaccesstoken();
         $url="https://api.weixin.qq.com/cgi-bin/menu/create?access_token=".$access_token;
         $menu = [
