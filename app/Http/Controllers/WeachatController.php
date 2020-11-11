@@ -61,9 +61,13 @@ class WeachatController extends Controller{
                     file_put_contents('wx_user.log',$url,FILE_APPEND);
                     $url_json = file_get_contents($url);
                     $url_json = json_decode($url_json,true);
-                    // echo $url_json;die;
+                    // dd($url_json['openid']);
                     //查询用户表是否有此用户的信息
-                    $res=WxUser::where('openid',$url_json['openid'])->first();
+                    $where=[
+                        'openid'=>$url_json['openid']
+                    ];
+                    $res=WxUser::where($where)->first();
+                    // dd($res);
                     if($res){
                         $content="欢迎回来";
                     }else{
@@ -78,8 +82,8 @@ class WeachatController extends Controller{
                         WxUser::insert($userinfo);
                     }
                     //发送消息
-
-                    echo $this->news($data,$content);  
+                    $result=$this->news($data,$content);
+                    return $result;  
             
 
                 }elseif($data->Event=='unsubscribe'){   // unsubscribe 取消关注
@@ -123,7 +127,6 @@ class WeachatController extends Controller{
                 <CreateTime>%s</CreateTime>
                 <MsgType><![CDATA[%s]]></MsgType>
                 <Content><![CDATA[%s]]></Content>
-                <MsgId>%s</MsgId>
             </xml>";     
         $info=sprintf($xml,$ToUserName,$FromUserName,$CreateTime,$MsgType,$content);
         return $info;
@@ -158,14 +161,23 @@ class WeachatController extends Controller{
         $menu = [
             'button'    => [
                 [
-                    'type'  => 'click',
-                    'name'  => '微信',
-                    'key'   => 'wechat',
-
-                    "sub_button"    => [	
-                        "type"  =>  "view",
-                        "name"  =>  "搜索",
-                        "url"   =>  "http://www.soso.com/"
+                    'name'  => '360',
+                    "sub_button"    => [
+                        [
+                            "type"  =>  "view",
+                            "name"  =>  "搜索",
+                            "url"   =>  "http://www.soso.com/"
+                        ],
+                        [
+                            'type'  => 'pic_photo_or_album',
+                            'name'  => '图片',
+                            'key'   => 'uploadimg'
+                        ],
+                        [
+                            'type'  => 'click',
+                            'name'  => '天气',
+                            'key'   => 'weather'
+                        ]
                     ]
                 ],
                 
@@ -189,9 +201,9 @@ class WeachatController extends Controller{
         //判断接口返回
         $info=json_decode($json_data,true);
         if($info['errcode']==0){   //判断错误码
-            echo '请求成功';
+            echo '<pre>';print_r($info);echo '</pre>';
         }else{
-            echo '请求失败';
+            echo date("Y-m-d H:i:s").  "创建菜单成功";
         }
 
     }
