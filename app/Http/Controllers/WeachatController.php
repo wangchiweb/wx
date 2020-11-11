@@ -92,16 +92,18 @@ class WeachatController extends Controller{
     public function news($data,$content){
         $ToUserName=$data->FromUserName;
         $FromUserName=$data->ToUserName;
-        
+        $CreateTime=time();
+        $MsgType="text";
         $xml="<xml>
-                <ToUserName><![CDATA[".$ToUserName."]]></ToUserName>
-                <FromUserName><![CDATA[".$FromUserName."]]></FromUserName>
-                <CreateTime>time()</CreateTime>
-                <MsgType><![CDATA[text]]></MsgType>
-                <Content><![CDATA[".$content."]]></Content>
+                <ToUserName><![CDATA[%s]]></ToUserName>
+                <FromUserName><![CDATA[%s]]></FromUserName>
+                <CreateTime>%s</CreateTime>
+                <MsgType><![CDATA[%s]]></MsgType>
+                <Content><![CDATA[%s]]></Content>
                 <MsgId>%s</MsgId>
             </xml>";     
-        return $xml;
+        $info=sprintf($xml,$ToUserName,$FromUserName,$CreateTime,$MsgType,$content,);
+        return $info;
     }
     /**获取access_token */
     public function getaccesstoken(){
