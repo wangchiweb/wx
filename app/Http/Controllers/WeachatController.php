@@ -6,8 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use GuzzleHttp\Client;
 use App\Model\WxUser;
+use App\Model\WxMation;
 
 class WeachatController extends Controller{
+    protected $xml_obj;
     /**微信接口配置 */
     public function checkSignature(){
         $signature = $_GET["signature"];
@@ -48,79 +50,164 @@ class WeachatController extends Controller{
         //把xml文本转换为PHP的对象
         $data=simplexml_load_string($xml_str);
         // dd($data);
+        $this->xml_obj=$data;
+
         $msg_type=$data->MsgType;   //推送事件的消息类型
         switch($msg_type){
             case 'event' :
-                if($data->Event=='subscribe'){   // subscribe 扫码关注
-                    $content="欢迎关注";
-                    //获取用户信息
-                    $access_token=$this->getaccesstoken();   //获取access_token
-                    $openid=$data->FromUserName;   //获取openid
-                    $url="https://api.weixin.qq.com/cgi-bin/user/info?access_token=".$access_token."&openid=".$openid."&lang=zh_CN";
-                    //记录用户信息日志
-                    file_put_contents('wx_user.log',$url,FILE_APPEND);
-                    $url_json = file_get_contents($url);
-                    $url_json = json_decode($url_json,true);
-                    // dd($url_json['openid']);
-                    //查询用户表是否有此用户的信息
-                    $where=[
-                        'openid'=>$url_json['openid']
-                    ];
-                    $res=WxUser::where($where)->first();
-                    // dd($res);
-                    if($res){
-                        $content="欢迎回来";
-                    }else{
-                        $userinfo=[
-                            'openid'=>$url_json['openid'],
-                            'nickname'=>$url_json['nickname'],
-                            'sex'=>$url_json['sex'],
-                            'city'=>$url_json['city'],
-                            'headimgurl'=>$url_json['headimgurl'],
-                            'subscribe_time'=>$url_json['subscribe_time']
-                        ];
-                        WxUser::insert($userinfo);
-                    }
-                    //发送消息
-                    $result=$this->news($data,$content);
-                    return $result;  
-            
-
-                }elseif($data->Event=='unsubscribe'){   // unsubscribe 取消关注
-                    //取消用户信息
+                $EventKey=$this->xml_obj->EventKey;
+                if($EventKey=='weather'){
+                    echo $this->subscribe();
+                    die;
                 }
+                if($data->Event=='subscribe'){   // subscribe 扫码关注
+                    echo $this->subscribe();
+                    die;  
+                }elseif($data->Event=='unsubscribe'){   // unsubscribe 取消关注
+                    echo "";
+                    die;
+                }
+                break;
 
-                break;
             case 'text' :           //处理文本信息
-                echo '2222';
+                $result=$this->text();
+                return $result;
                 break;
+
             case 'image' :          // 处理图片信息
-                echo '3333';
+                $this->image();
                 break;
+
             case 'voice' :          // 语音
-                echo '4444';
+                $this->voice();
                 break;
+
             case 'video' :          // 视频
-                echo '5555';
+                $this->video();
                 break;
 
             default:
                 echo 'default';
+        }  
+    }
+    /**处理文本 */
+    public function text(){
+        echo '<pre>';print_r($this->xml_obj);echo '</pre>';
+        $data=[
+            "FromUserName"=>$this->xml_obj->FromUserName,
+            "CreateTime"=>$this->xml_obj->CreateTime,
+            "MsgType"=>$this->xml_obj->MsgType,
+            "Content"=>$this->xml_obj->Content,
+        ];
+        //入库
+        WxMation::insert($data);
+    }
+    /**处理图片 */
+    public function image(){
+        $access_token=$this->getaccesstoken();
+        $media_id=$this->xml_obj->MediaId;
+        $url='https://api.weixin.qq.com/cgi-bin/media/get?access_token='.$access_token.'&media_id='.$media_id;
+        $img=file_get_contents($url);
+        $media_path='image/wx.jpg';
+        $res=file_put_contents($media_path,$img);
+        if($res){
+           // TODO 成功
+        }else{
+            // TODO 失败
         }
 
-        // if($data->MsgType=="event"){
-        //     if($data->Event=="subscribe"){
-        //         echo $this->news($data);
-        //         die;
-        //     }
-        // }   
+        $data=[
+            "MediaId"=>$media_id,
+            "FromUserName"=>$this->xml_obj->FromUserName,
+            "CreateTime"=>$this->xml_obj->CreateTime,
+            "MsgType"=>$this->xml_obj->MsgType,
+            "PicUrl" =>$this->xml_obj->PicUrl,
+            'media_path'=>$this->media_path
+        ];
+        //入库
+        WxMation::insert($data);
+    }
+    /**处理语音 */
+    public function voice(){
+        $access_token=$this->getaccesstoken();
+        $media_id=$this->xml_obj->MediaId;
+        $url='https://api.weixin.qq.com/cgi-bin/media/get/jssdk?access_token='.$access_token.'&media_id='.$media_id;
+        $img = file_get_contents($url);
+        $media_path='voice/wx.mp3';
+        $res = file_put_contents($media_path,$img);
+        if($res){
+            // TODO 成功
+        }else{
+            // TODO 失败
+        }
+        $data=[
+            "MediaId"=>$media_id,
+            "FromUserName"=>$this->xml_obj->FromUserName,
+            "CreateTime"=>$this->xml_obj->CreateTime,
+            "MsgType"=>$this->xml_obj->MsgType,
+            "Format" => $this->xml_obj->Format,
+            "ThumbMediaId" =>$this->xml_obj->ThumbMediaId,
+            'media_path'=>$this->media_path
+        ];
+        //入库
+        WxMation::insert($data);
+    }
+    /**处理视频 */
+    public function video(){
+        $access_token=$this->getaccesstoken();
+        $media_id=$this->xml_obj->MediaId;
+        $url='https://api.weixin.qq.com/cgi-bin/media/get/jssdk?access_token='.$access_token.'&media_id='.$media_id;
+        $img = file_get_contents($url);
+        $media_path='video/wx.mp4';
+        $res = file_put_contents($media_path,$img);
+        if($res){
+            // TODO 成功
+        }else{
+            // TODO 失败
+        }
+        $data=[
+            "MediaId"=>$media_id,
+            "FromUserName"=>$this->xml_obj->FromUserName,
+            "CreateTime"=>$this->xml_obj->CreateTime,
+            "MsgType"=>$this->xml_obj->MsgType,
+            "ThumbMediaId" =>$this->xml_obj->ThumbMediaId,
+            'media_path'=>$this->media_path
+        ];
+        //入库
+        WxMation::insert($data);
     }
     /**回复扫码关注 */
-    public function news($data,$content){
-        $ToUserName=$data->FromUserName;
-        $FromUserName=$data->ToUserName;
+    public function subscribe(){
+        $ToUserName=$this->xml_obj->FromUserName;   //openid
+        $FromUserName=$this->xml_obj->ToUserName;    
         $CreateTime=time();
         $MsgType="text";
+        
+        //查询此用户是否存在        
+        $res=WxUser::where(['openid'=>$ToUserName])->first();         
+        if($res){   //如果存在 
+            $content="欢迎回来";        
+        }else{   //如果不存在，则添加此用户入库 
+            //获取用户信息
+            $userinfo=$this->getwxuser();    
+            $data=[
+                'openid'=>$userinfo['openid'],
+                'nickname'=>$userinfo['nickname'],
+                'sex'=>$userinfo['sex'],
+                'city'=>$userinfo['city'],
+                'province'=>$userinfo['province'],
+                'country'=>$userinfo['country'],
+                'language'=>$userinfo['language'],
+                'headimgurl'=>$userinfo['headimgurl'],
+                'subscribe_time'=>$userinfo['subscribe_time']
+            ];
+            WxUser::insert($data);
+            $content="欢迎关注";
+        }
+
+        //点击天气，回复此时的天气信息
+        $content=$this->weather();
+
         $xml="<xml>
                 <ToUserName><![CDATA[%s]]></ToUserName>
                 <FromUserName><![CDATA[%s]]></FromUserName>
@@ -161,12 +248,17 @@ class WeachatController extends Controller{
         $menu = [
             'button'    => [
                 [
-                    'name'  => '360',
+                    'type'  => 'view',
+                    'name'  => '商城',
+                    'url'   => 'http://2004shop.comcto.com'
+                ],
+                [
+                    'name'  => '二级菜单',
                     "sub_button"    => [
                         [
-                            "type"  =>  "view",
-                            "name"  =>  "搜索",
-                            "url"   =>  "http://www.soso.com/"
+                            "type"  =>  "click",
+                            "name"  =>  "签到",
+                            "url"   =>  "checking"
                         ],
                         [
                             'type'  => 'pic_photo_or_album',
@@ -180,13 +272,11 @@ class WeachatController extends Controller{
                         ]
                     ]
                 ],
-                
                 [
                     'type'  => 'view',
                     'name'  => '百度',
                     'url'   => 'https://www.baidu.com'
-                ],
-
+                ]
             ]
         ];
         
@@ -206,5 +296,34 @@ class WeachatController extends Controller{
             echo date("Y-m-d H:i:s").  "创建菜单成功";
         }
 
+    }
+    /**获取用户信息 */
+    public function getwxuser(){
+        $access_token=$this->getaccesstoken();   //获取access_token
+        $openid=$this->xml_obj->FromUserName;   //获取openid
+        $url="https://api.weixin.qq.com/cgi-bin/user/info?access_token=".$access_token."&openid=".$openid."&lang=zh_CN";
+        
+        //使用guzzle发起POST请求(请求接口)
+        $client=new Client();   //实例化 客户端
+        $response=$client->request('GET',$url,[
+            'verify'=>false, 
+        ]);   //发起请求并接收响应
+        
+        $json_data=$response->getBody();   //服务器的响应数据
+        $info=json_decode($json_data,true);
+        return $info;
+    }
+    /**获取天气信息 */
+    public function weather(){
+        $url = "http://api.k780.com:88/?app=weather.future&weaid=beijing&&appkey=10003&sign=b59bc3ef6191eb9f747dd4e83c99f2a4&format=json";
+        $weather = file_get_contents($url);
+        $weather = json_decode($weather,true);
+        if($weather["success"]){
+            $content = "";
+            foreach ($weather["result"] as $v) {
+                $content .= "\n"."地区:" . $v['citynm'] .","."日期:" . $v['days'] . $v['week'] .","."温度:" . $v['temperature'] .","."风速:" . $v['winp'] .","."天气:" . $v['weather'];
+            }
+        }
+        return $content;
     }
 }
