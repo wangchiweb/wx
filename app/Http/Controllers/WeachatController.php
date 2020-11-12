@@ -59,14 +59,14 @@ class WeachatController extends Controller{
                 if($EventKey=='weather'){   //点击天气，回复此时的天气信息
                     $content=$this->weather();
                     $object=$this->xml_obj;                                      
-                    $weather=$this->xml($object,$Content);
+                    $weather=$this->xml($object,$content);
                     return $weather;
                     die;
                 }
                 if($EventKey=='sign'){   //点击签到
-                    $Content=$this->sign();
+                    $content=$this->sign();
                     $object=$this->xml_obj;
-                    $sign=$this->xml($object,$Content);
+                    $sign=$this->xml($object,$content);
                     return $sign;
                     die;
                 }
@@ -83,13 +83,13 @@ class WeachatController extends Controller{
                 if($this->xml_obj->Content=="天气"){
                     $content=$this->weather();
                     $object=$this->xml_obj;                                      
-                    $weather=$this->xml($object,$Content);
+                    $weather=$this->xml($object,$content);
                     return $weather;
                     die;
                 }else{
                     $content='。。。看不清！！！！';
                     $object=$this->xml_obj;                                      
-                    $weather=$this->xml($object,$Content);
+                    $weather=$this->xml($object,$content);
                     return $weather;
                     die;
                 }
