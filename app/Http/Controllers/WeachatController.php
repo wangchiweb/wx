@@ -56,10 +56,20 @@ class WeachatController extends Controller{
         switch($msg_type){
             case 'event' :
                 $EventKey=$this->xml_obj->EventKey;
-                // if($EventKey=='weather'){
-                //     echo $this->subscribe();
-                //     die;
-                // }
+                if($EventKey=='weather'){   //点击天气，回复此时的天气信息
+                    $content=$this->weather();
+                    $object=$this-> ;
+                    $weather=$this->xml($object,$Content);
+                    return $weather;
+                    die;
+                }
+                f($EventKey=='sign'){   //点击签到
+                    $Content=$this->sign();
+                    $object=$this->xml_obj;
+                    $sign=$this->xml($object,$Content);
+                    return $sign;
+                    die;
+                }
                 if($data->Event=='subscribe'){   // subscribe 扫码关注
                     echo $this->subscribe();
                     die;  
@@ -89,6 +99,22 @@ class WeachatController extends Controller{
             default:
                 echo 'default';
         }  
+    }
+    /**xml */
+    private function xml($object,$content){
+        $ToUserName=$object->FromUserName;   //openid
+        $FromUserName=$object->ToUserName;    
+        $CreateTime=time();
+        $MsgType="text";
+        $xml="<xml>
+                <ToUserName><![CDATA[%s]]></ToUserName>
+                <FromUserName><![CDATA[%s]]></FromUserName>
+                <CreateTime>%s</CreateTime>
+                <MsgType><![CDATA[%s]]></MsgType>
+                <Content><![CDATA[%s]]></Content>
+            </xml>";     
+        $info=sprintf($xml,$ToUserName,$FromUserName,$CreateTime,$MsgType,$content);
+        return $info;
     }
     /**处理文本 */
     public function text(){
@@ -205,9 +231,6 @@ class WeachatController extends Controller{
             $content="欢迎关注";
         }
 
-        //点击天气，回复此时的天气信息
-        $content=$this->weather();
-
         $xml="<xml>
                 <ToUserName><![CDATA[%s]]></ToUserName>
                 <FromUserName><![CDATA[%s]]></FromUserName>
@@ -258,7 +281,7 @@ class WeachatController extends Controller{
                         [
                             "type"  =>  "click",
                             "name"  =>  "签到",
-                            "url"   =>  "checking"
+                            "url"   =>  "sign"
                         ],
                         [
                             'type'  => 'pic_photo_or_album',
@@ -325,5 +348,9 @@ class WeachatController extends Controller{
             }
         }
         return $content;
+    }
+    /**获取签到信息 */
+    public function sign(){
+        
     }
 }
