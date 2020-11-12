@@ -70,16 +70,29 @@ class WeachatController extends Controller{
                     return $sign;
                     die;
                 }
-                if($data->Event=='subscribe'){   // subscribe 扫码关注
+                if($this->xml_obj->Event=='subscribe'){   // subscribe 扫码关注
                     echo $this->subscribe();
                     die;  
-                }elseif($data->Event=='unsubscribe'){   // unsubscribe 取消关注
+                }elseif($this->xml_obj->Event=='unsubscribe'){   // unsubscribe 取消关注
                     echo "";
                     die;
                 }
                 break;
 
             case 'text' :           //处理文本信息
+                if($this->xml_obj->Content=="天气"){
+                    $content=$this->weather();
+                    $object=$this->xml_obj;                                      
+                    $weather=$this->xml($object,$Content);
+                    return $weather;
+                    die;
+                }else{
+                    $content='。。。看不清！！！！';
+                    $object=$this->xml_obj;                                      
+                    $weather=$this->xml($object,$Content);
+                    return $weather;
+                    die;
+                }
                 $result=$this->text();
                 return $result;
                 break;
@@ -352,5 +365,26 @@ class WeachatController extends Controller{
     /**获取签到信息 */
     public function sign(){
         
+    }
+    /**上传素材 */
+    public function uploadmaterial(){
+        $access_token=$this->getaccesstoken();
+        $type='image';        //素材类型 image voice video thumb
+        $url='https://api.weixin.qq.com/cgi-bin/media/upload?access_token='.$access_token.'&type='.$type;
+        $media = 'image/wx.jpg';     //要上传的素材
+        //使用guzzle发起get请求
+        $client = new Client();         //实例化 客户端
+        $response = $client->request('POST',$url,[
+            'verify'    => false,
+            'multipart' => [
+                [
+                    'name'  => 'media',
+                    'contents'  => fopen($media,'r')
+                ],         //上传的文件路径]
+            ]
+        ]);       //发起请求并接收响应
+
+        $data=$response->getBody();
+        echo $data;
     }
 }
