@@ -56,10 +56,10 @@ class WeachatController extends Controller{
         switch($msg_type){
             case 'event' :
                 $EventKey=$this->xml_obj->EventKey;
-                if($EventKey=='weather'){
-                    echo $this->subscribe();
-                    die;
-                }
+                // if($EventKey=='weather'){
+                //     echo $this->subscribe();
+                //     die;
+                // }
                 if($data->Event=='subscribe'){   // subscribe 扫码关注
                     echo $this->subscribe();
                     die;  
