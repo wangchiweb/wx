@@ -250,7 +250,7 @@ class WeachatController extends Controller{
                 [
                     'type'  => 'view',
                     'name'  => '商城',
-                    'url'   => 'http://2004shop.comcto.com'
+                    'url'   => 'http://2004wch.comcto.com/'
                 ],
                 [
                     'name'  => '二级菜单',
